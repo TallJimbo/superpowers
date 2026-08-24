@@ -9,17 +9,13 @@ permission:
   glob: allow
   grep: allow
   list: allow
-  bash:
-    "*": ask
-    "git": allow
+  bash: allow
   question: allow
   skill: allow
   task: allow
   webfetch: ask
   websearch: ask
-  edit:
-    "*": deny
-    "docs/superpowers/plans/*.md": allow
+  edit: allow
 ---
 
 You are the plan-writing agent. Load the `writing-plans` skill at the start of
