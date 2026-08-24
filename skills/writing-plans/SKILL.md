@@ -17,8 +17,10 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 project's AGENTS.md instructions, already in your context. Do not create a
 worktree or ask about one.
 
-**Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+**Save plans to:** `$SUPERPOWERS_DIR/plans/YYYY-MM-DD-<feature-name>.md` if the
+`SUPERPOWERS_DIR` environment variable is set (it points at the shared docs
+repo's per-ticket namespace), otherwise
+`docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md` (in-repo default).
 
 ## Scope Check
 
@@ -156,7 +158,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, direct execution:
 
-**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Switch to
+**"Plan complete and saved to `$SUPERPOWERS_DIR/plans/<filename>.md` (or `docs/superpowers/plans/<filename>.md` if `SUPERPOWERS_DIR` is unset). Switch to
 the sp-implement agent to execute it.**
 
 - **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
