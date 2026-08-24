@@ -92,6 +92,24 @@ bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
 
 **Other environments:** The server must keep running in the background across conversation turns. If your environment reaps detached processes, use `--foreground` and launch the command with your platform's background execution mechanism.
 
+**OpenCode in the tkt sandbox:** The tkt sandbox bridges a fixed port from inside
+the network-isolated sandbox back to the host (default `8081`, configured as the
+sandbox tool's `vc_port`). Bind the server in-sandbox to that port and pass
+`--project-dir` a writable root (the `.agent` directory in a ticket workspace, or
+the repository root in single-repo mode); screens are served to the host over the
+bridge, so the returned URL works verbatim in the host browser. Do **not** use
+`--open` (there is no X11 socket in the sandbox) — give the user the URL instead.
+
+```bash
+BRAINSTORM_PORT=<vc_port> scripts/start-server.sh \
+  --project-dir /path/to/writable-root
+```
+
+The default backgrounding survives across bash calls because the harness is the
+grandparent of the script (see `--owner` watchdog below). If your sandbox reaps
+detached processes, add `--foreground` and background it with your harness's
+mechanism.
+
 If the URL is unreachable from your browser (common in remote/containerized setups), bind a non-loopback host:
 
 ```bash
