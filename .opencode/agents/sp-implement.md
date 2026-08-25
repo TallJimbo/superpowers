@@ -17,6 +17,7 @@ permission:
   edit:
     "*": deny
     ".superpowers/sdd/**": allow
+    ".agent/**/.superpowers/sdd/**": allow
     "docs/superpowers/plans/*.md": allow
     "docs/superpowers/specs/*.md": ask
 ---
