@@ -22,10 +22,10 @@ Skills speak in actions ("dispatch a subagent", "create a todo", "read a file").
 OpenCode loads skills through the `skill` tool. The intent-signaling `sp-*`
 agents select and load the relevant skill for their phase:
 
-- `sp-brainstorm` → loads `brainstorming`
-- `sp-plan` → loads `writing-plans`
-- `sp-implement` → loads `subagent-driven-development`
-- `sp-review` → read-only reviewer dispatched by `sp-implement`
+- `sp-design` → loads `brainstorming` (conversational design; no durable writes)
+- `sp-plan` → loads `writing-plans` (materializes design doc + plan)
+- `sp-build` → loads `subagent-driven-development`
+- `sp-review` → read-only reviewer dispatched by `sp-build`
 
 These shells live in `~/.config/opencode/agents/`. There is no bootstrap
 injection; each shell's prompt carries the tool mapping and skill selection.

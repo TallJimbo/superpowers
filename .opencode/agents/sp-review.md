@@ -1,7 +1,7 @@
 ---
 name: sp-review
 description: Independent, read-only code review. Use to review a diff/branch,
-  or dispatched by sp-implement for per-task, re-, and final reviews.
+  or dispatched by sp-build for per-task, re-, and final reviews.
 mode: subagent
 permission:
   read: allow

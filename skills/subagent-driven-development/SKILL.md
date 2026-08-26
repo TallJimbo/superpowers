@@ -154,6 +154,12 @@ authority the plan argues from, and conflicts inside the plan resolve
 against it. A plan with no reachable spec gets a ledger note saying so —
 rulings made without one are provisional.
 
+The spec and plan are internal handover artifacts: they are for the
+implementing agents, not for the human, and code is the source of truth.
+When implementation diverges from them, update them to match reality
+silently — do not pause for approval to edit the spec or plan. The human
+reviews the code, not these documents.
+
 Before dispatching Task 1, scan the plan once for conflicts, writing down
 what you checked as you check it:
 
@@ -255,6 +261,11 @@ and fix-round diffs need it.
   (5) the report-file path and report contract. Exact values (numbers,
   magic strings, signatures, test cases) appear only in the brief. Never
   make a subagent read the whole plan file.
+- When the plan or design specifies complete code — including design-agreed
+  snippets lifted from the brainstorming conversation — the implementer
+  transcribes it verbatim rather than re-deriving it. Do not re-negotiate or
+  "improve" agreed snippets in the dispatch; if a transcription seems wrong,
+  treat it as a finding for the review, not a silent rewrite.
 - **Report file:** name the implementer's report file after the brief
   (brief `…/task-N-brief.md` → report `…/task-N-report.md`) and put it in
   the dispatch prompt. The implementer writes the full report there and

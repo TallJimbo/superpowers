@@ -45,7 +45,10 @@ override it:
 - **Architectural** — new projects, new subsystems, changes that
   restructure how components fit together or alter interfaces others
   depend on. Follow the full process: questions, approaches, sectioned
-  design, written spec, then the writing-plans skill.
+  design, then an in-chat design summary that the human approves. You do
+  NOT write the design doc or plan in this phase — materializing those is
+  the plan agent's job, and switching to it is the signal to do so (see
+  "After the Design" below).
 
 When in doubt between two paths, take the heavier one. The ratchet is
 one-way: hidden complexity discovered mid-task upgrades the path —
@@ -96,11 +99,10 @@ your path and complete them in order.
 2. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
-5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `$SUPERPOWERS_DIR/specs/` when `SUPERPOWERS_DIR` is set, otherwise `docs/superpowers/specs/` (path `YYYY-MM-DD-<topic>-design.md`), and commit
-7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+5. **Present design** — in sections scaled to their complexity, get user approval after each section; show concrete code examples and prototype stubs, not just prose
+6. **Surface decisions in chat** — make each design-level decision explicit as it's made, so nothing design-relevant is buried
+7. **Present the in-chat design summary (Gate 1)** — a concise recap of the design and the decisions, and wait for the human's explicit go-ahead. Do NOT write the design doc here; hand off to the plan agent to materialize it.
+8. **Hand off to the plan agent** — tell the human to switch to sp-plan, which writes the design handover doc and the implementation plan from this conversation's context.
 
 ## Process Flow
 
@@ -116,12 +118,10 @@ digraph brainstorming {
     "Explore project context" [shape=box];
     "Ask clarifying questions" [shape=box];
     "Propose 2-3 approaches" [shape=box];
-    "Present design sections" [shape=box];
-    "User approves design?" [shape=diamond];
-    "Write design doc" [shape=box];
-    "Spec self-review\n(fix inline)" [shape=box];
-    "User reviews spec?" [shape=diamond];
-    "Invoke writing-plans skill" [shape=doublecircle];
+    "Present design sections\n(code examples + stubs)" [shape=box];
+    "Surface decisions in chat" [shape=box];
+    "User approves design (Gate 1)?" [shape=diamond];
+    "Hand off to sp-plan\n(materializes design doc + plan)" [shape=doublecircle];
     "Hidden complexity? Upgrade path" [shape=box];
 
     "Classify: spike / bounded / architectural" -> "Present question + probe (2-3 sentences)" [label="spike"];
@@ -135,20 +135,17 @@ digraph brainstorming {
     "Hidden complexity? Upgrade path" -> "Classify: spike / bounded / architectural";
     "Explore project context" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
-    "Present design sections" -> "User approves design?";
-    "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "User reviews spec?";
-    "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "Propose 2-3 approaches" -> "Present design sections\n(code examples + stubs)";
+    "Present design sections\n(code examples + stubs)" -> "Surface decisions in chat";
+    "Surface decisions in chat" -> "User approves design (Gate 1)?";
+    "User approves design (Gate 1)?" -> "Present design sections\n(code examples + stubs)" [label="no, revise"];
+    "User approves design (Gate 1)?" -> "Hand off to sp-plan\n(materializes design doc + plan)" [label="yes"];
 }
 ```
 
-**Terminal states are path-bound.** Architectural: the ONLY skill you
-invoke after brainstorming is writing-plans — never frontend-design,
-mcp-builder, or any other implementation skill. Bounded: after
+**Terminal states are path-bound.** Architectural: after Gate 1 approval, hand
+off to the plan agent (sp-plan), which materializes the design doc and the plan —
+never invoke an implementation skill here. Bounded: after
 approval, implementation proceeds directly through the normal
 development workflow; no plan document. Spike: the terminal state is a
 reported recommendation.
@@ -184,6 +181,9 @@ is the whole process.
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
 - Ask after each section whether it looks right so far
 - Cover: architecture, components, data flow, error handling, testing
+- Show concrete code examples and prototype stubs, not just prose — and present
+  them as complete, well-formed snippets, since they're authoritative references
+  that will be lifted verbatim into the handoff
 - Be ready to go back and clarify if something doesn't make sense
 
 **Design for isolation and clarity:**
@@ -201,38 +201,38 @@ is the whole process.
 
 ## After the Design (architectural path)
 
-**Documentation:**
+**Handoff, not documentation.** This phase does NOT write the design doc. The
+design lives in the conversation; the human's review surface is the in-chat
+design summary. When the design is approved (Gate 1), hand off to the plan agent
+(sp-plan), which runs in the same session and materializes the durable artifacts
+from the conversation's context:
 
-- Write the validated design (spec) to `specs/` under the docs root: if the
+- **Design handover doc** — saved to `specs/` under the docs root (if the
   `SUPERPOWERS_DIR` environment variable is set it points at the shared docs
-  repo's per-ticket namespace, otherwise fall back to in-repo. I.e. save to
-  `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<topic>-design.md` if set, else
-  `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`, creating the target
-  directory as needed.
-- Use elements-of-style:writing-clearly-and-concisely skill if available
-- Commit the design document to git
+  repo's per-ticket namespace, otherwise fall back to in-repo:
+  `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<topic>-design.md` or
+  `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`).
+- **Implementation plan** — saved to `plans/` under the same docs root.
 
-**Spec Self-Review:**
-After writing the spec document, look at it with fresh eyes:
+**These documents are for the implementing agents, not for the human.** Their
+purpose is carrying the agreed design and decisions (including code examples and
+prototype stubs, verbatim) into implementation, and surviving compaction or a new
+session on big projects. The human does not read or maintain them; code is the
+source of truth. Do not ask the human to review the doc files — they already
+approved the design in chat.
 
-1. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
-2. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
-3. **Scope check:** Is this focused enough for a single implementation plan, or does it need decomposition?
-4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
+**Presenting the design — code examples and prototype stubs.** When you present
+the design for review, show concrete code examples and prototype stubs, not just
+prose. Present them as complete, well-formed snippets (not throwaway sketches):
+they are authoritative implementation references and will be lifted verbatim into
+the handoff so the implementing agent transcribes them rather than reinventing
+them differently. Surface each design-level decision explicitly as it's made, so
+nothing design-relevant is buried in the eventual artifacts.
 
-Fix any issues inline. No need to re-review — just fix and move on.
-
-**User Review Gate:**
-After the spec review loop passes, ask the user to review the written spec before proceeding:
-
-> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
-
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
-
-**Implementation:**
-
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+**Implementation:** hand off to the plan agent. Do NOT invoke any implementation
+skill here. sp-plan materializes the design doc and plan and surfaces any further
+design-level decisions it makes, ending in a Gate 2 confirmation before
+implementation.
 
 ## Visual Companion
 
