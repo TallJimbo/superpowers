@@ -155,7 +155,7 @@ You MUST complete each phase before proceeding to the next.
    - Don't fix multiple things at once
 
 3. **Verify Before Continuing**
-   - Did it work? Yes → Phase 4
+   - Did it work? Yes → Phase 3.5
    - Didn't work? Form NEW hypothesis
    - DON'T add more fixes on top
 
@@ -165,9 +165,30 @@ You MUST complete each phase before proceeding to the next.
    - Ask for help
    - Research more
 
+### Phase 3.5: Report Findings and Design the Fix Together
+
+**The checkpoint before any implementation.** Root cause alone is not license to
+start fixing.
+
+1. **Stop** once the hypothesis is confirmed.
+2. **Present your findings** to your human partner:
+   - The root cause
+   - The evidence that confirms it
+   - Why the symptom is not the cause
+3. **Propose a fix design**, not just a fix: what to change, where, and why it
+   addresses the root cause.
+4. **Design together.** Invite alternatives and tradeoffs. Adjust the plan based
+   on their input.
+5. **Wait for explicit approval** before proceeding to Phase 4.
+
+Do NOT proceed to implementation just because you found the root cause. Finding
+it is the investigation's goal, not the license to code.
+
 ### Phase 4: Implementation
 
-**Fix the root cause, not the symptom:**
+**Only after the fix design from Phase 3.5 has been reviewed and approved.**
+
+Fix the root cause, not the symptom:
 
 1. **Create Failing Test Case**
    - Simplest possible reproduction
@@ -261,6 +282,7 @@ If you catch yourself thinking:
 | **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |
 | **2. Pattern** | Find working examples, compare | Identify differences |
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
+| **3.5. Report & Design** | Present cause, evidence, fix design; get approval | Plan agreed together |
 | **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
 
 ## When Process Reveals "No Root Cause"
