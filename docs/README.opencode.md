@@ -3,31 +3,22 @@
 Guide for using this fork of Superpowers with [OpenCode.ai](https://opencode.ai).
 See the [repo README](../README.md) for what differs from upstream and the
 harness-support caveat. This fork does **not** ship an OpenCode plugin; it's
-installed by pointing OpenCode at the fork's skills and symlinking its agents.
+installed by pointing OpenCode at the fork's skills.
 
 ## Installation
 
-1. Clone this repository (or add it as a git remote) to
-   `~/.config/opencode/superpowers`.
-2. Point OpenCode at the fork's skills. In your `opencode.json` (global or
-   project-level):
+Point OpenCode at the fork's skills. In your `opencode.json` (global or
+project-level):
 
-   ```jsonc
-   {
-     "skills": {
-       "paths": ["~/.config/opencode/superpowers/skills"],
-     },
-   }
-   ```
+```jsonc
+{
+  "skills": {
+    "paths": ["<tkt>/superpowers/skills"],
+  },
+}
+```
 
-3. Symlink the `sp-*` agents into your OpenCode config:
-
-   ```bash
-   ln -sf ~/.config/opencode/superpowers/.opencode/agents/sp-*.md ~/.config/opencode/agents/
-   ```
-
-Restart OpenCode, and start with the `sp-design` agent when brainstorming a new
-change.
+Restart OpenCode.
 
 OpenCode uses its own setup. If you also use Claude Code, Codex, or another
 harness, install Superpowers separately for each one — though support for those
@@ -78,17 +69,15 @@ Create project-specific skills in `.opencode/skills/` within your project.
 
 ## Updating
 
-This fork has no plugin to update. To pick up new commits, `git pull` in
-`~/.config/opencode/superpowers` and restart OpenCode.
+This fork has no plugin to update. To pick up new commits, update the submodule
+in the `tkt` package (`git submodule update --remote superpowers`) and restart
+OpenCode.
 
 ## How It Works
 
-The fork relies on two OpenCode config features rather than a plugin:
-
-1. **`skills.paths`** registers the fork's `skills/` directory, so OpenCode
-   discovers all skills without symlinks.
-2. **Symlinked `sp-*` agents** in `~/.config/opencode/agents/` provide the custom
-   workflow agents.
+The fork relies on OpenCode config rather than a plugin: `skills.paths` registers
+the fork's `skills/` directory, so OpenCode discovers all skills without
+symlinks.
 
 ### Tool Mapping
 
@@ -112,11 +101,6 @@ Skills speak in actions rather than naming any one runtime's tools. On OpenCode 
 1. Use OpenCode's `skill` tool to list available skills
 2. Check that `skills.paths` in your `opencode.json` points at the fork's `skills/`
 3. Each skill needs a `SKILL.md` file with valid YAML frontmatter
-
-### Agents not found
-
-1. Verify the `sp-*.md` symlinks exist in `~/.config/opencode/agents/`
-2. Restart OpenCode after config changes
 
 ## Getting Help
 
