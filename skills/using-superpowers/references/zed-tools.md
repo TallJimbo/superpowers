@@ -2,23 +2,24 @@
 
 Skills speak in actions ("dispatch a subagent", "create a todo", "read a file"). On the Zed Agent these resolve to the tools below.
 
-| Action skills request | Zed equivalent |
-|----------------------|---------------------|
-| Read a file | `read_file` |
-| Create a file | `write_file` |
-| Edit a file | `edit_file` |
-| Delete a file | `delete_path` |
-| Copy a file | `copy_path` |
-| Move/rename a file | `move_path` |
-| Create a directory | `create_directory` |
-| Run a shell command | `terminal` |
-| Search file contents | `grep` |
-| Find files by name | `find_path` |
-| List a directory | `list_directory` |
-| Fetch a URL | `fetch` |
-| Web search | `search_web` |
-| Invoke a skill | the `skill` tool |
-| Dispatch a subagent (`Subagent (general-purpose):` template) | `spawn_agent` |
+| Action skills request                                        | Zed equivalent     |
+| ------------------------------------------------------------ | ------------------ |
+| Read a file                                                  | `read_file`        |
+| Create a file                                                | `write_file`       |
+| Edit a file                                                  | `edit_file`        |
+| Delete a file                                                | `delete_path`      |
+| Copy a file                                                  | `copy_path`        |
+| Move/rename a file                                           | `move_path`        |
+| Create a directory                                           | `create_directory` |
+| Run a shell command                                          | `bash`             |
+| Ask the user a question                                      | `ask_user`         |
+| Search file contents                                         | `grep`             |
+| Find files by name                                           | `find_path`        |
+| List a directory                                             | `list_directory`   |
+| Fetch a URL                                                  | `fetch`            |
+| Web search                                                   | `search_web`       |
+| Invoke a skill                                               | the `skill` tool   |
+| Dispatch a subagent (`Subagent (general-purpose):` template) | `spawn_agent`      |
 
 ## Skill selection
 
@@ -29,7 +30,6 @@ Zed loads global skills from `~/.agents/skills/` (each skill is a folder there; 
 - Zed has no separate `apply_patch` tool; use `edit_file` and `write_file`.
 - `spawn_agent` subagents get the same tools as the parent agent; there is no read-only subagent variant. To keep a reviewer read-only, instruct the subagent not to use edit tools.
 - Task tracking ("create a todo", "mark complete") has no dedicated Zed tool; keep a Markdown checklist in the conversation or in a file instead.
-- There is no `question` tool; ask structured questions directly in the conversation (superpowers' brainstorming phase is conversational anyway).
 - Check compile/type errors after edits with the `diagnostics` tool.
 - `search_web` is only available to Zed Pro subscribers using the zed.dev provider; otherwise use an MCP server that provides web search.
 
