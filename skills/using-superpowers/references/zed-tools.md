@@ -4,7 +4,7 @@ Skills speak in actions ("dispatch a subagent", "create a todo", "read a file").
 
 | Action skills request                                        | Zed equivalent     |
 | ------------------------------------------------------------ | ------------------ |
-| Read a file                                                  | `read_file`        |
+| Read a file                                                  | `read`             |
 | Create a file                                                | `write_file`       |
 | Edit a file                                                  | `edit_file`        |
 | Delete a file                                                | `delete_path`      |
