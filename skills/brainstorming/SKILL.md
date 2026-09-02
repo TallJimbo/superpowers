@@ -45,10 +45,11 @@ override it:
 - **Architectural** — new projects, new subsystems, changes that
   restructure how components fit together or alter interfaces others
   depend on. Follow the full process: questions, approaches, sectioned
-  design, then an in-chat design summary that the human approves. You do
-  NOT write the design doc or plan in this phase — materializing those is
-  the plan agent's job, and switching to it is the signal to do so (see
-  "After the Design" below).
+  design, then an in-chat design summary that the human approves. The human
+  reviews the design in conversation — via the code examples, not by
+  reading a spec — and you write the design spec, iterating on it as the
+  conversation proceeds. The implementation plan is written later, by the
+  plan agent (see "After the Design" below).
 
 When in doubt between two paths, take the heavier one. The ratchet is
 one-way: hidden complexity discovered mid-task upgrades the path —
@@ -65,15 +66,15 @@ artifact, never the approval.
 
 ## Red Flags
 
-| Thought | Reality |
-|---------|---------|
-| "This is too simple to need a design" | Simple means a short design, not no design. Two sentences in chat, then approval. |
-| "I'll call it bounded and skip the spec" | Reaching for a label to skip work IS the doubt — take the heavier path. |
-| "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
-| "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. A new project has no existing flow — it is architectural. |
-| "The spike works, so I'll keep the code" | A spike's output is an answer. Keeping the code is a new request — classify it. |
-| "It grew, but I'm almost done — no need to re-classify" | Hidden complexity upgrades the path mid-task. Stop and say so. |
-| "They approved the spike, so the follow-up change is approved too" | Each task gets its own classification and its own approval. |
+| Thought                                                                  | Reality                                                                                                    |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| "This is too simple to need a design"                                    | Simple means a short design, not no design. Two sentences in chat, then approval.                          |
+| "I'll call it bounded and skip the spec"                                 | Reaching for a label to skip work IS the doubt — take the heavier path.                                    |
+| "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes.                  |
+| "I understand this kind of app, so it's bounded"                         | Bounded measures the repo, not your familiarity. A new project has no existing flow — it is architectural. |
+| "The spike works, so I'll keep the code"                                 | A spike's output is an answer. Keeping the code is a new request — classify it.                            |
+| "It grew, but I'm almost done — no need to re-classify"                  | Hidden complexity upgrades the path mid-task. Stop and say so.                                             |
+| "They approved the spike, so the follow-up change is approved too"       | Each task gets its own classification and its own approval.                                                |
 
 ## Checklist
 
@@ -81,6 +82,7 @@ Classify first, announce the path, then create a task for each item on
 your path and complete them in order.
 
 **Spike:**
+
 1. **Explore project context** — enough to frame the probe
 2. **Present question + probe plan** — 2-3 sentences
 3. **Get approval** — a nod is enough
@@ -88,6 +90,7 @@ your path and complete them in order.
 5. **Report findings** — a recommendation; label anything built as throwaway
 
 **Bounded:**
+
 1. **Explore project context** — check files, docs, recent commits
 2. **Ask clarifying questions** — one at a time, the ones that matter
 3. **Present short design in chat** — approach, files touched, testing
@@ -95,14 +98,16 @@ your path and complete them in order.
 5. **Implement** — proceed with the normal development workflow (TDD applies); no plan document
 
 **Architectural:**
+
 1. **Explore project context** — check files, docs, recent commits
 2. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section; show concrete code examples and prototype stubs, not just prose
 6. **Surface decisions in chat** — make each design-level decision explicit as it's made, so nothing design-relevant is buried
-7. **Present the in-chat design summary (Gate 1)** — a concise recap of the design and the decisions, and wait for the human's explicit go-ahead. Do NOT write the design doc here; hand off to the plan agent to materialize it.
-8. **Hand off to the plan agent** — tell the human to switch to sp-plan, which writes the design handover doc and the implementation plan from this conversation's context.
+7. **Present the in-chat design summary (Gate 1)** — a concise recap of the design and the decisions, and wait for the human's explicit go-ahead. The design is reviewed in conversation, via the code examples, not by reading a spec.
+8. **Write the design spec** — save the agreed design to `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<topic>-design.md` (or `docs/superpowers/specs/…` if unset), capturing the design, the decisions, and the interface stubs / small design- or style-critical examples. Iterate on it as the conversation proceeds.
+9. **Hand off to the plan agent** — tell the human to switch to sp-plan, which turns the approved spec into the implementation plan.
 
 ## Process Flow
 
@@ -121,7 +126,7 @@ digraph brainstorming {
     "Present design sections\n(code examples + stubs)" [shape=box];
     "Surface decisions in chat" [shape=box];
     "User approves design (Gate 1)?" [shape=diamond];
-    "Hand off to sp-plan\n(materializes design doc + plan)" [shape=doublecircle];
+    "Write design spec; hand off to plan phase\n(turns spec into plan)" [shape=doublecircle];
     "Hidden complexity? Upgrade path" [shape=box];
 
     "Classify: spike / bounded / architectural" -> "Present question + probe (2-3 sentences)" [label="spike"];
@@ -139,16 +144,15 @@ digraph brainstorming {
     "Present design sections\n(code examples + stubs)" -> "Surface decisions in chat";
     "Surface decisions in chat" -> "User approves design (Gate 1)?";
     "User approves design (Gate 1)?" -> "Present design sections\n(code examples + stubs)" [label="no, revise"];
-    "User approves design (Gate 1)?" -> "Hand off to sp-plan\n(materializes design doc + plan)" [label="yes"];
+    "User approves design (Gate 1)?" -> "Write design spec; hand off to plan phase\n(turns spec into plan)" [label="yes"];
 }
 ```
 
-**Terminal states are path-bound.** Architectural: after Gate 1 approval, hand
-off to the plan agent (sp-plan), which materializes the design doc and the plan —
-never invoke an implementation skill here. Bounded: after
-approval, implementation proceeds directly through the normal
-development workflow; no plan document. Spike: the terminal state is a
-reported recommendation.
+**Terminal states are path-bound.** Architectural: after Gate 1 approval, write
+the design spec, then hand off to the plan phase, which turns the spec into the
+plan — never invoke an implementation skill here. Bounded: after approval,
+implementation proceeds directly through the normal development workflow; no
+plan document. Spike: the terminal state is a reported recommendation.
 
 ## The Process
 
@@ -181,9 +185,11 @@ is the whole process.
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
 - Ask after each section whether it looks right so far
 - Cover: architecture, components, data flow, error handling, testing
-- Show concrete code examples and prototype stubs, not just prose — and present
-  them as complete, well-formed snippets, since they're authoritative references
-  that will be lifted verbatim into the handoff
+- Show concrete code examples and prototype stubs, not just prose. Keep these to
+  **interface stubs** and small pieces of implementation that pin down a design
+  or a wide-reaching style choice — this is the part of the implementation the
+  human reviews here. Do not draft the full implementation in the design; the
+  bulk of the code is left to the build phase.
 - Be ready to go back and clarify if something doesn't make sense
 
 **Design for isolation and clarity:**
@@ -201,44 +207,54 @@ is the whole process.
 
 ## After the Design (architectural path)
 
-**Handoff, not documentation.** This phase does NOT write the design doc. The
-design lives in the conversation; the human's review surface is the in-chat
-design summary. When the design is approved (Gate 1), hand off to the plan agent
-(sp-plan), which runs in the same session and materializes the durable artifacts
-from the conversation's context:
+**Write the spec; review in conversation.** The design is reviewed in the
+conversation — you walk the human through it via code examples, and they approve
+the in-chat design summary (Gate 1). The human does not review the spec as a
+prose document; the code examples you present in chat are the review surface.
 
-- **Design handover doc** — saved to `specs/` under the docs root (if the
-  `SUPERPOWERS_DIR` environment variable is set it points at the shared docs
-  repo's per-ticket namespace, otherwise fall back to in-repo:
-  `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<topic>-design.md` or
-  `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`).
-- **Implementation plan** — saved to `plans/` under the same docs root.
+The design spec is a durable handover artifact you write and keep current:
 
-**These documents are for the implementing agents, not for the human.** Their
-purpose is carrying the agreed design and decisions (including code examples and
-prototype stubs, verbatim) into implementation, and surviving compaction or a new
-session on big projects. The human does not read or maintain them; code is the
-source of truth. Do not ask the human to review the doc files — they already
-approved the design in chat.
+- **Design spec** — saved to `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<topic>-design.md`
+  if the `SUPERPOWERS_DIR` environment variable is set (it points at the shared
+  docs repo's per-ticket namespace), otherwise
+  `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` (in-repo default).
+  Capture the agreed design, the decisions made, and the interface stubs / small
+  design- or style-critical examples. Iterate on it as the conversation proceeds
+  so it stays current with the approved design.
+- **Implementation plan** — written later, by the plan phase (writing-plans /
+  sp-plan), which turns this spec into the detailed task plan.
+
+**This document is for the implementing agents, not for the human.** Its job is
+carrying the agreed design and decisions (including the interface stubs and
+small design- or style-critical snippets) into the plan phase, and surviving
+compaction or a new session on big projects. The human does not read or
+maintain it; the code examples shown in chat are the source of truth they
+reviewed. Do not ask the human to review the spec file — they already approved
+the design in chat.
 
 **Presenting the design — code examples and prototype stubs.** When you present
-the design for review, show concrete code examples and prototype stubs, not just
-prose. Present them as complete, well-formed snippets (not throwaway sketches):
-they are authoritative implementation references and will be lifted verbatim into
-the handoff so the implementing agent transcribes them rather than reinventing
-them differently. Surface each design-level decision explicitly as it's made, so
-nothing design-relevant is buried in the eventual artifacts.
+the design for review, show concrete code examples and prototype stubs, not
+just prose. Keep them to **interface stubs** (exact signatures) and small
+pieces of implementation that are particularly important for a design choice or
+a wide-reaching style choice — this is the code the human reviews in the design
+phase. Do not draft the full implementation here; the spec carries interface
+stubs and examples, and the plan phase elaborates the full code. Present these
+snippets as complete, well-formed interface stubs (not throwaway sketches) so
+the exact signatures carry into the spec, and surface each design-level
+decision explicitly as it's made, so nothing design-relevant is buried in the
+eventual artifacts.
 
-**Implementation:** hand off to the plan agent. Do NOT invoke any implementation
-skill here. sp-plan materializes the design doc and plan and surfaces any further
-design-level decisions it makes, ending in a Gate 2 confirmation before
-implementation.
+**Implementation:** after Gate 1 approval, hand off to the plan agent. Do NOT
+invoke any implementation skill here. sp-plan turns the spec into the plan and
+surfaces any further design-level decisions it makes, ending in a Gate 2
+confirmation before implementation.
 
 ## Visual Companion
 
 A browser-based companion for showing mockups, diagrams, and visual options during brainstorming. Available as a tool — not a mode. Accepting the companion means it's available for questions that benefit from visual treatment; it does NOT mean every question goes through the browser.
 
-**Offering the companion (just-in-time):** Do NOT offer it upfront. Wait until a question would genuinely be clearer shown than told — a real mockup / layout / diagram question, not merely a UI *topic*. The first time that happens, offer it then, as its own message:
+**Offering the companion (just-in-time):** Do NOT offer it upfront. Wait until a question would genuinely be clearer shown than told — a real mockup / layout / diagram question, not merely a UI _topic_. The first time that happens, offer it then, as its own message:
+
 > "This next part might be easier if I show you — I can put together mockups, diagrams, and comparisons in a browser tab as we go. It's still new and can be token-intensive. Want me to? I'll open it for you."
 
 **This offer MUST be its own message.** Only the offer — no clarifying question, summary, or other content. Wait for the user's response. If they accept, start the server with `--open` so their browser opens to the first screen automatically. If they decline, continue text-only and don't offer again unless they raise it.

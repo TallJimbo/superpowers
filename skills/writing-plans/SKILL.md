@@ -17,25 +17,21 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 project's AGENTS.md instructions, already in your context. Do not create a
 worktree or ask about one.
 
-## Materialize the design handover doc first
+## Read the spec first
 
-You run in the same session as the design agent, so the approved design is in
-your conversation. Before writing the plan, materialize it as a **design handover
-doc**:
+You generally run in the same session as the design agent, so the approved
+design often is in your conversation, and the design phase wrote the **design
+spec**. Read it before writing the plan — it is your source of truth for the
+agreed design and decisions:
 
-- Save to `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<feature-name>-design.md` if the
-  `SUPERPOWERS_DIR` environment variable is set (it points at the shared docs
+- The spec is at `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<feature-name>-design.md` if
+  the `SUPERPOWERS_DIR` environment variable is set (it points at the shared docs
   repo's per-ticket namespace), otherwise
   `docs/superpowers/specs/YYYY-MM-DD-<feature-name>-design.md` (in-repo default).
-- Capture the agreed design, the decisions made, and any code examples /
-  prototype stubs **verbatim** from the conversation. Those snippets are
-  authoritative: the implementing agent will transcribe them, not reinvent them.
+- It captures the agreed design, the decisions made, and the interface stubs /
+  small design- or style-critical examples from the conversation. Elaborate these
+  into full code in the plan's tasks — do not stop at the stubs.
 - Self-check it for placeholders, contradictions, and ambiguity before moving on.
-
-**This document is for the implementing agents, not for the human.** Its job is
-carrying the design across compaction/new-session handover and into
-implementation. The human does not read or maintain it; they already approved the
-design in conversation.
 
 **Save plans to:** `$SUPERPOWERS_DIR/plans/YYYY-MM-DD-<feature-name>.md` if the
 `SUPERPOWERS_DIR` environment variable is set (it points at the shared docs
@@ -51,8 +47,8 @@ immediate sign-off** — choices that affect behavior, interfaces, structure, or
 tradeoffs (file layout, signatures, reinterpretations), not mechanical
 transcription. Because decisions are signed off as they're made, the final gate
 before implementation (Gate 2) is usually just a confirmation. When the plan's
-task text contains the complete code to write (from the design handover or
-derived during planning), the implementing agent transcribes it verbatim.
+task text contains the complete code to write (from the spec or derived during
+planning), the implementing agent transcribes it verbatim.
 
 ## Scope Check
 
@@ -81,6 +77,7 @@ independently testable deliverable.
 ## Bite-Sized Task Granularity
 
 **Each step is one action (2-5 minutes):**
+
 - "Write the failing test" - step
 - "Run it to make sure it fails" - step
 - "Implement the minimal code to make the test pass" - step
@@ -121,11 +118,13 @@ include this section.]
 ### Task N: [Component Name]
 
 **Files:**
+
 - Create: `exact/path/to/file.py`
 - Modify: `exact/path/to/existing.py:123-145`
 - Test: `tests/exact/path/to/test.py`
 
 **Interfaces:**
+
 - Consumes: [what this task uses from earlier tasks — exact signatures]
 - Produces: [what later tasks rely on — exact function names, parameter
   and return types. A task's implementer sees only their own task; this
@@ -167,6 +166,7 @@ git commit -m "feat: add specific feature"
 ## No Placeholders
 
 Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
+
 - "TBD", "TODO", "implement later", "fill in details"
 - "Add appropriate error handling" / "add validation" / "handle edge cases"
 - "Write tests for the above" (without actual test code)
@@ -191,10 +191,10 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 After saving the plan, present the Gate 2 summary in chat: a concise recap of the
 design decisions you made (beyond the brainstormed design) and the task structure,
 and get the human's go-ahead before implementation. This is also the natural
-handoff/compaction point — the design doc and plan together carry a fresh session.
+handoff/compaction point — the design spec and plan together carry a fresh session.
 
-**"Design doc and plan complete and saved to `$SUPERPOWERS_DIR/specs/` and
-`$SUPERPOWERS_DIR/plans/` (or `docs/superpowers/` if `SUPERPOWERS_DIR` is unset).
+**"Plan complete and saved to `$SUPERPOWERS_DIR/plans/`
+(or `docs/superpowers/plans/` if `SUPERPOWERS_DIR` is unset).
 Here are the decisions and task breakdown — any concerns before I start building?
 Switch to the sp-build agent to execute it once approved."**
 
