@@ -14,8 +14,8 @@ Skills speak in actions ("dispatch a subagent", "create a todo", "read a file").
 | Run a shell command                                          | `bash`             |
 | Ask the user a question (primary agent only)                 | `ask_user`         |
 | Search file contents                                         | `grep`             |
-| Find files by name                                           | `find_path`        |
-| List a directory                                             | `list_directory`   |
+| Find files by name                                           | `glob`             |
+| List a directory                                             | `ls`               |
 | Fetch a URL                                                  | `fetch`            |
 | Web search                                                   | `search_web`       |
 | Invoke a skill                                               | the `skill` tool   |
