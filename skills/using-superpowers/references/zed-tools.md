@@ -5,8 +5,8 @@ Skills speak in actions ("dispatch a subagent", "create a todo", "read a file").
 | Action skills request                                        | Zed equivalent     |
 | ------------------------------------------------------------ | ------------------ |
 | Read a file                                                  | `read`             |
-| Create a file                                                | `Write`            |
-| Edit a file                                                  | `Edit`             |
+| Create a file                                                | `write`            |
+| Edit a file                                                  | `edit`             |
 | Delete a file                                                | `delete_path`      |
 | Copy a file                                                  | `copy_path`        |
 | Move/rename a file                                           | `move_path`        |
@@ -28,7 +28,7 @@ Zed loads global skills from `~/.agents/skills/` (each skill is a folder there; 
 
 ## Notes
 
-- Zed has no separate `apply_patch` tool; use the sandboxed MCP `Write` and `Edit` tools (which run inside the tkt sandbox).
+- Zed has no separate `apply_patch` tool; use the sandboxed MCP `write` and `edit` tools (which run inside the tkt sandbox).
 - `spawn_agent` subagents get the same tools as the parent agent; there is no read-only subagent variant. To keep a reviewer read-only, instruct the subagent not to use edit tools.
 - `ask_user` is intended for the **primary agent only**. Subagents also have the tool (they inherit the parent's profile, so it cannot be blocked), but it interrupts their flow and renders poorly — the skills (`zed-explorer` when used as a subagent, `zed-implementer`, `zed-reviewer`) instruct subagents to surface uncertainty in their report instead of calling it.
 - Task tracking ("create a todo", "mark complete") maps to the `todo_write`
