@@ -196,7 +196,8 @@ handoff/compaction point — the design spec and plan together carry a fresh ses
 **"Plan complete and saved to `$SUPERPOWERS_DIR/plans/`
 (or `docs/superpowers/plans/` if `SUPERPOWERS_DIR` is unset).
 Here are the decisions and task breakdown — any concerns before I start building?
-Switch to the sp-build agent to execute it once approved."**
+On approval, implementation proceeds via the subagent-driven-development
+skill."**
 
 - **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
 - Fresh subagent per task + two-stage review

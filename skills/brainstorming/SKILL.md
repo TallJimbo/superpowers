@@ -13,10 +13,27 @@ design, and get your human partner's approval.
 
 <HARD-GATE>
 Do NOT invoke any implementation skill, write any code, scaffold any
-project, or take any implementation action until you have told your
-human partner what you intend and they have approved it. This applies
-to EVERY task on EVERY path below — the ceremony scales with the task;
-the approval gate never does.
+project, or take any implementation action until your human partner has
+given the go-ahead to implement the COMPLETE design. This applies to
+EVERY task on EVERY path below — the ceremony scales with the task; the
+approval gate never does.
+
+**What counts as approval.** Approval is a specific speech act, not a
+tone of agreement. An answer counts as approval only if all three hold:
+
+1. The complete design is already on the table, in one place — every
+   part of it, not one aspect or a preview.
+2. You have explicitly declared it complete ("that's the full design —
+   anything missing?") and they have had the chance to widen it.
+3. They answered a separate, explicit implementation ask — "May I start
+   implementing this design?" — with a yes.
+
+Confirmations of understanding are NOT approval. "Yes, that's what I
+meant", "looks right", and every answer to a clarifying or aspect-check
+question confirm a piece of the design, not permission to build it.
+After such a confirmation your next move is to present the next part of
+the design or to declare the design complete and ask for the
+implementation go-ahead — never to start implementing.
 </HARD-GATE>
 
 ## Three Paths
@@ -39,9 +56,11 @@ override it:
   flow to change, the task is not bounded. Ask the clarifying
   questions that matter, present a short design IN CHAT (a few
   sentences to a few short paragraphs), and STOP. Implementation
-  starts only after your human partner says yes to that design — a
-  bounded task's approval is as hard a gate as an architectural
-  one. No spec file, no implementation plan document.
+  starts only after your human partner answers your explicit
+  implementation ask (see the HARD-GATE) — a yes to "is this what you
+  meant?" about one aspect of the design is not that answer. A bounded
+  task's approval is as hard a gate as an architectural one. No spec
+  file, no implementation plan document.
 - **Architectural** — new projects, new subsystems, changes that
   restructure how components fit together or alter interfaces others
   depend on. Follow the full process: questions, approaches, sectioned
@@ -49,7 +68,7 @@ override it:
   reviews the design in conversation — via the code examples, not by
   reading a spec — and you write the design spec, iterating on it as the
   conversation proceeds. The implementation plan is written later, by the
-  plan agent (see "After the Design" below).
+  plan phase (see "After the Design" below).
 
 When in doubt between two paths, take the heavier one. The ratchet is
 one-way: hidden complexity discovered mid-task upgrades the path —
@@ -71,6 +90,8 @@ artifact, never the approval.
 | "This is too simple to need a design"                                    | Simple means a short design, not no design. Two sentences in chat, then approval.                          |
 | "I'll call it bounded and skip the spec"                                 | Reaching for a label to skip work IS the doubt — take the heavier path.                                    |
 | "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes.                  |
+| "They said yes to 'is this what you meant?' — the design is approved"    | That confirmed one aspect of the design, not permission to build. Present the rest, declare it complete, then ask to start implementing as its own question. |
+| "They approved each section, so the design is approved"                  | Section confirmations are progress checks. Gate 1 is its own final message — the implementation ask.         |
 | "I understand this kind of app, so it's bounded"                         | Bounded measures the repo, not your familiarity. A new project has no existing flow — it is architectural. |
 | "The spike works, so I'll keep the code"                                 | A spike's output is an answer. Keeping the code is a new request — classify it.                            |
 | "It grew, but I'm almost done — no need to re-classify"                  | Hidden complexity upgrades the path mid-task. Stop and say so.                                             |
@@ -93,8 +114,8 @@ your path and complete them in order.
 
 1. **Explore project context** — check files, docs, recent commits
 2. **Ask clarifying questions** — one at a time, the ones that matter
-3. **Present short design in chat** — approach, files touched, testing
-4. **Get approval** — STOP and wait for an explicit yes; presenting the design and starting in the same breath is skipping the gate
+3. **Present short design in chat** — approach, files touched, testing; end by declaring it the complete design and asking what's missing
+4. **Get approval** — ask the implementation ask ("May I start implementing?") as its own question, then STOP and wait for the yes. Presenting the design and starting in the same breath is skipping the gate, and a yes to any earlier understanding check ("is this what you meant?") is not this yes
 5. **Implement** — proceed with the normal development workflow (TDD applies); no plan document
 
 **Architectural:**
@@ -103,11 +124,11 @@ your path and complete them in order.
 2. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
-5. **Present design** — in sections scaled to their complexity, get user approval after each section; show concrete code examples and prototype stubs, not just prose
+5. **Present design** — in sections scaled to their complexity, checking with the user after each section (those checks are progress checks, not Gate 1 approval); show concrete code examples and prototype stubs, not just prose
 6. **Surface decisions in chat** — make each design-level decision explicit as it's made, so nothing design-relevant is buried
-7. **Present the in-chat design summary (Gate 1)** — a concise recap of the design and the decisions, and wait for the human's explicit go-ahead. The design is reviewed in conversation, via the code examples, not by reading a spec.
+7. **Present the in-chat design summary (Gate 1)** — a concise recap of the design and the decisions; declare it the complete design, then ask for the go-ahead as its own final message. The design is reviewed in conversation, via the code examples, not by reading a spec. Per-section confirmations from step 5 never satisfy Gate 1.
 8. **Write the design spec** — save the agreed design to `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<topic>-design.md` (or `docs/superpowers/specs/…` if unset), capturing the design, the decisions, and the interface stubs / small design- or style-critical examples. Iterate on it as the conversation proceeds.
-9. **Hand off to the plan agent** — tell the human to switch to sp-plan, which turns the approved spec into the implementation plan.
+9. **Hand off to the plan phase** — tell the human the design is approved and the next step is the plan phase (the writing-plans skill), which turns the approved spec into the implementation plan.
 
 ## Process Flow
 
@@ -183,7 +204,10 @@ is the whole process.
 
 - Once you believe you understand what you're building, present the design
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
+- Ask after each section whether it looks right so far — these are progress
+  checks, not approval; only the implementation ask approves the design
+- End the presentation by declaring the design complete — "that's the full
+  design; anything I've missed?" — and only then ask for the go-ahead
 - Cover: architecture, components, data flow, error handling, testing
 - Show concrete code examples and prototype stubs, not just prose. Keep these to
   **interface stubs** and small pieces of implementation that pin down a design
@@ -221,8 +245,8 @@ The design spec is a durable handover artifact you write and keep current:
   Capture the agreed design, the decisions made, and the interface stubs / small
   design- or style-critical examples. Iterate on it as the conversation proceeds
   so it stays current with the approved design.
-- **Implementation plan** — written later, by the plan phase (writing-plans /
-  sp-plan), which turns this spec into the detailed task plan.
+- **Implementation plan** — written later, by the plan phase (writing-plans),
+  which turns this spec into the detailed task plan.
 
 **This document is for the implementing agents, not for the human.** Its job is
 carrying the agreed design and decisions (including the interface stubs and
@@ -244,10 +268,10 @@ the exact signatures carry into the spec, and surface each design-level
 decision explicitly as it's made, so nothing design-relevant is buried in the
 eventual artifacts.
 
-**Implementation:** after Gate 1 approval, hand off to the plan agent. Do NOT
-invoke any implementation skill here. sp-plan turns the spec into the plan and
-surfaces any further design-level decisions it makes, ending in a Gate 2
-confirmation before implementation.
+**Implementation:** after Gate 1 approval, hand off to the plan phase. Do NOT
+invoke any implementation skill here. The plan phase (the writing-plans skill)
+turns the spec into the plan and surfaces any further design-level decisions it
+makes, ending in a Gate 2 confirmation before implementation.
 
 ## Visual Companion
 

@@ -36,7 +36,3 @@ Zed loads global skills from `~/.agents/skills/` (each skill is a folder there; 
   for the session.
 - Check compile/type errors after edits with the `diagnostics` tool.
 - `search_web` is only available to Zed Pro subscribers using the zed.dev provider; otherwise use an MCP server that provides web search.
-
-## Agent profiles
-
-The `sp-*` agent profiles are defined under `agent.profiles` in the user settings and configure which built-in tools a thread may use. The skill to use for a phase is selected by each profile's instructions/thread context, mirroring the OpenCode `sp-*` shells.
