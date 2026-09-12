@@ -127,7 +127,7 @@ your path and complete them in order.
 5. **Present design** — in sections scaled to their complexity, checking with the user after each section (those checks are progress checks, not Gate 1 approval); show concrete code examples and prototype stubs, not just prose
 6. **Surface decisions in chat** — make each design-level decision explicit as it's made, so nothing design-relevant is buried
 7. **Present the in-chat design summary (Gate 1)** — a concise recap of the design and the decisions; declare it the complete design, then ask for the go-ahead as its own final message. The design is reviewed in conversation, via the code examples, not by reading a spec. Per-section confirmations from step 5 never satisfy Gate 1.
-8. **Write the design spec** — save the agreed design to `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<topic>-design.md` (or `docs/superpowers/specs/…` if unset), capturing the design, the decisions, and the interface stubs / small design- or style-critical examples. Iterate on it as the conversation proceeds.
+8. **Write the design spec** — save the agreed design under the **docs root** (see "After the Design" below; default in-repo `docs/superpowers/`) at `specs/YYYY-MM-DD-<topic>-design.md`, capturing the design, the decisions, and the interface stubs / small design- or style-critical examples. Iterate on it as the conversation proceeds.
 9. **Hand off to the plan phase** — tell the human the design is approved and the next step is the plan phase (the writing-plans skill), which turns the approved spec into the implementation plan.
 
 ## Process Flow
@@ -238,10 +238,12 @@ prose document; the code examples you present in chat are the review surface.
 
 The design spec is a durable handover artifact you write and keep current:
 
-- **Design spec** — saved to `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<topic>-design.md`
-  if the `SUPERPOWERS_DIR` environment variable is set (it points at the shared
-  docs repo's per-ticket namespace), otherwise
-  `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` (in-repo default).
+- **Design spec** — saved to `specs/YYYY-MM-DD-<topic>-design.md` under the
+  **docs root**. Your project-level instructions (AGENTS.md, user rules)
+  specify the docs root location — and any commit workflow that goes with it
+  (e.g., a per-ticket docs worktree you commit on) — so look there for what
+  they say about superpowers docs; if they specify none, default to in-repo
+  `docs/superpowers/`.
   Capture the agreed design, the decisions made, and the interface stubs / small
   design- or style-critical examples. Iterate on it as the conversation proceeds
   so it stays current with the approved design.

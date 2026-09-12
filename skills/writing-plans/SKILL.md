@@ -24,19 +24,20 @@ design often is in your conversation, and the design phase wrote the **design
 spec**. Read it before writing the plan — it is your source of truth for the
 agreed design and decisions:
 
-- The spec is at `$SUPERPOWERS_DIR/specs/YYYY-MM-DD-<feature-name>-design.md` if
-  the `SUPERPOWERS_DIR` environment variable is set (it points at the shared docs
-  repo's per-ticket namespace), otherwise
-  `docs/superpowers/specs/YYYY-MM-DD-<feature-name>-design.md` (in-repo default).
+- The spec is at `specs/YYYY-MM-DD-<feature-name>-design.md` under the **docs
+  root**. Your project-level instructions (AGENTS.md, user rules) specify the
+  docs root location — and any commit workflow that goes with it (e.g., a
+  per-ticket docs worktree you commit on) — so look there for what they say
+  about superpowers docs; if they specify none, default to in-repo
+  `docs/superpowers/`.
 - It captures the agreed design, the decisions made, and the interface stubs /
   small design- or style-critical examples from the conversation. Elaborate these
   into full code in the plan's tasks — do not stop at the stubs.
 - Self-check it for placeholders, contradictions, and ambiguity before moving on.
 
-**Save plans to:** `$SUPERPOWERS_DIR/plans/YYYY-MM-DD-<feature-name>.md` if the
-`SUPERPOWERS_DIR` environment variable is set (it points at the shared docs
-repo's per-ticket namespace), otherwise
-`docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md` (in-repo default).
+**Save plans to:** `plans/YYYY-MM-DD-<feature-name>.md` under the docs root
+named by your project-level instructions (as for the spec above; default
+in-repo `docs/superpowers/`).
 
 ## The plan is a hidden agent artifact
 
@@ -193,8 +194,9 @@ design decisions you made (beyond the brainstormed design) and the task structur
 and get the human's go-ahead before implementation. This is also the natural
 handoff/compaction point — the design spec and plan together carry a fresh session.
 
-**"Plan complete and saved to `$SUPERPOWERS_DIR/plans/`
-(or `docs/superpowers/plans/` if `SUPERPOWERS_DIR` is unset).
+**"Plan complete and saved to the docs root's `plans/`
+(or in-repo `docs/superpowers/plans/` if your project instructions name no
+docs root).
 Here are the decisions and task breakdown — any concerns before I start building?
 On approval, implementation proceeds via the subagent-driven-development
 skill."**
