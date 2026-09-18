@@ -92,21 +92,29 @@ bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
 
 **Other environments:** The server must keep running in the background across conversation turns. If your environment reaps detached processes, use `--foreground` and launch the command with your platform's background execution mechanism.
 
-**OpenCode in the tkt sandbox:** The tkt sandbox bridges a fixed port from inside
-the network-isolated sandbox back to the host (default `8081`, configured as the
-sandbox tool's `vc_port`). Bind the server in-sandbox to that port and pass
-`--project-dir` a writable root (the `.agent` directory in a ticket workspace, or
-the repository root in single-repo mode); screens are served to the host over the
-bridge, so the returned URL works verbatim in the host browser. Do **not** use
-`--open` (there is no X11 socket in the sandbox) — give the user the URL instead.
+**tkt workspaces (Zed agent with sandboxed MCP tools):** Do **not** launch the
+server from the sandboxed `bash` tool — the sandbox is network-isolated, so the
+returned URL would be unreachable from the user's browser, and detached
+processes there are fragile. Use the `brainstorm_server` MCP tool instead:
+`action="start"` with `project_dir` set to a writable directory inside the
+workspace runs the server on the host, where the browser reaches it verbatim
+and auto-open works (the tool returns the same JSON: `url`, `screen_dir`,
+`state_dir`). The push loop below is unchanged — it is entirely file-based. Use
+`action="status"` instead of inspecting the `server-info`/`server-stopped`
+files by hand, and `action="stop"` to shut the server down. It self-exits when
+the session ends or after its idle timeout.
 
-```bash
-BRAINSTORM_PORT=<vc_port> scripts/start-server.sh \
-  --project-dir /path/to/writable-root
-```
-
-The default backgrounding survives across bash calls because the harness is the
-grandparent of the script (see `--owner` watchdog below). If your sandbox reaps
+**Legacy tkt sandbox runs (e.g. OpenCode, no MCP tool):** The sandbox bridges a
+fixed port from inside the network-isolated sandbox back to the host (default
+`8081`, configured as the sandbox tool's `vc_port`). Bind the server in-sandbox
+to that port (`BRAINSTORM_PORT=<vc_port>`) and pass `--project-dir` a writable
+root (the `.agent` directory in a ticket workspace, or the repository root in
+single-repo mode); screens are served to the host over the bridge, so the
+returned URL works verbatim in the host browser. Do **not** use `--open` (there
+is no display in the sandbox) — give the user the URL instead. The default
+backgrounding survives across bash calls because the server's watchdog exits
+when its launching harness (the script's grandparent, overridable via
+`--owner-pid`) dies; if your sandbox reaps
 detached processes, add `--foreground` and background it with your harness's
 mechanism.
 
