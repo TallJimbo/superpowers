@@ -16,6 +16,10 @@
 #                         after the user approves the visual companion).
 #   --foreground          Run server in the current terminal (no backgrounding).
 #   --background          Force background mode (overrides Codex auto-foreground).
+#   --owner-pid <pid>     Override the harness PID whose death the server's
+#                         watchdog reacts to (default: auto-detected grandparent).
+#                         Use when the launcher is not the script's grandparent
+#                         (e.g. a long-lived MCP server spawning it directly).
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
@@ -26,8 +30,13 @@ FORCE_BACKGROUND="false"
 BIND_HOST="127.0.0.1"
 URL_HOST=""
 IDLE_TIMEOUT_MINUTES=""
+OWNER_PID_OVERRIDE=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --owner-pid)
+      OWNER_PID_OVERRIDE="$2"
+      shift 2
+      ;;
     --project-dir)
       PROJECT_DIR="$2"
       shift 2
@@ -164,6 +173,12 @@ fi
 # watchdog is disabled and the idle timeout becomes the only shutdown trigger.
 if is_windows_like_shell; then
   OWNER_PID=""
+fi
+
+# Explicit --owner-pid wins over the grandparent heuristic (applied last so an
+# explicit PID is not cleared by the Windows detection above).
+if [[ -n "$OWNER_PID_OVERRIDE" ]]; then
+  OWNER_PID="$OWNER_PID_OVERRIDE"
 fi
 
 # Foreground mode for environments that reap detached/background processes.
