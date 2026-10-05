@@ -66,7 +66,7 @@ digraph process {
         "Spec ✅ and quality approved?" [shape=diamond];
         "Finding conflicts with plan text?" [shape=diamond];
         "Rule on the conflict, ledger the ruling" [shape=box];
-        "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, more capable model" [shape=box];
+        "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, higher effort tier" [shape=box];
         "Dispatch scoped re-review (./re-review-prompt.md)" [shape=box];
         "All findings addressed?" [shape=diamond];
         "R = 5?" [shape=diamond];
@@ -94,13 +94,13 @@ digraph process {
     "Spec ✅ and quality approved?" -> "Append completion to ledger, mark todo complete" [label="yes"];
     "Spec ✅ and quality approved?" -> "Finding conflicts with plan text?" [label="no"];
     "Finding conflicts with plan text?" -> "Rule on the conflict, ledger the ruling" [label="yes"];
-    "Rule on the conflict, ledger the ruling" -> "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, more capable model";
-    "Finding conflicts with plan text?" -> "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, more capable model" [label="no"];
-    "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, more capable model" -> "Dispatch scoped re-review (./re-review-prompt.md)";
+    "Rule on the conflict, ledger the ruling" -> "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, higher effort tier";
+    "Finding conflicts with plan text?" -> "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, higher effort tier" [label="no"];
+    "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, higher effort tier" -> "Dispatch scoped re-review (./re-review-prompt.md)";
     "Dispatch scoped re-review (./re-review-prompt.md)" -> "All findings addressed?";
     "All findings addressed?" -> "Append completion to ledger, mark todo complete" [label="yes"];
     "All findings addressed?" -> "R = 5?" [label="no"];
-    "R = 5?" -> "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, more capable model" [label="no - next round"];
+    "R = 5?" -> "Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, higher effort tier" [label="no - next round"];
     "R = 5?" -> "Adjudicate each open finding" [label="yes - breaker trips"];
     "Adjudicate each open finding" -> "Any load-bearing finding?";
     "Any load-bearing finding?" -> "Rule and continue; stop only if every path forward is a guess" [label="yes"];
@@ -184,40 +184,49 @@ implementation.
 
 ## Model Selection
 
-Use the least powerful model that can handle each role to conserve cost and increase speed.
+All subagents run on the machine-designated model named in your harness
+reference's **Model policy** — the model your human partner provisioned for
+this work. Never pick a different model, never browse a model catalog or
+invoke a model-listing tool to choose one, and never dispatch to a provider
+your human partner has not designated. If a dispatch errors that a model is
+"not available" or "unavailable", you named an undesignated model: return to
+the Model policy and re-dispatch correctly — do not try a different id, and
+do not ask to enable a model-listing tool.
 
-**Mechanical implementation tasks** (isolated functions, clear specs, 1-2 files): use a fast, cheap model. Most implementation tasks are mechanical when the plan is well-specified.
+What you scale per dispatch is **reasoning effort**, not the model. Scale
+effort to the role:
 
-**Integration and judgment tasks** (multi-file coordination, pattern matching, debugging): use a standard model.
+**Lowest effort tier** — transcription and mechanical work: the plan text
+contains the complete code to write (implementation is transcription plus
+testing), single-file mechanical fixes, repeated same-shape edits, scoped
+re-reviews of small fix diffs.
 
-**Architecture and design tasks**: use the most capable available model.
-The final whole-branch review is one of these — dispatch it on the most
-capable available model, not the session default.
+**Middle effort tier** — the floor for judgment work: implementers working
+from prose descriptions, multi-file integration and pattern matching,
+debugging, and task reviewers. A small mechanical diff does not need the
+highest tier; a subtle concurrency change does. When in doubt, use this tier.
 
-**Review tasks**: choose the model with the same judgment, scaled to the
-diff's size, complexity, and risk. A small mechanical diff does not need the
-most capable model; a subtle concurrency change does. Scoped re-reviews of
-small fix diffs take a cheap-to-mid tier.
+**Highest effort tier** — where judgment is the whole job: the final
+whole-branch review, architecture- and design-heavy diffs, and fix-loop
+escalation (rounds 4-5 dispatch at least one tier above the implementer
+that got stuck).
 
-**Fix-loop escalation (rounds 4-5)**: use a model at least one tier above
-the implementer that got stuck.
+**Effort cost logic.** Turn count beats token price: wall-clock and context
+cost scale with how many turns a subagent takes, and the lowest tier
+routinely takes 2-3× the turns on multi-step work — costing more overall.
+That is why the middle tier is the floor for reviewers and for implementers
+working from prose descriptions.
 
-**Always specify the model explicitly when dispatching a subagent.** An
-omitted model inherits your session's model — often the most capable and
-most expensive — which silently defeats this section.
-
-**Turn count beats token price.** Wall-clock and context cost scale with how
-many turns a subagent takes, and the cheapest models routinely take 2-3× the
-turns on multi-step work — costing more overall. Use a mid-tier model as the
-floor for reviewers and for implementers working from prose descriptions.
-When the task's plan text contains the complete code to write, the
-implementation is transcription plus testing: use the cheapest tier for
-that implementer. Single-file mechanical fixes also take the cheapest tier.
+**How you specify effort is harness-specific — follow your Model policy
+exactly.** Some harnesses take effort as a variant suffix on the designated
+model id; others pin the subagent model machine-side and direct you to omit
+the model parameter entirely. Never guess ids or tier names; use the exact
+strings your Model policy provides.
 
 **Task complexity signals (implementation tasks):**
-- Touches 1-2 files with a complete spec → cheap model
-- Touches multiple files with integration concerns → standard model
-- Requires design judgment or broad codebase understanding → most capable model
+- Plan text carries the complete code, or touches 1-2 files mechanically → lowest tier
+- Touches multiple files with integration concerns → middle tier
+- Requires design judgment or broad codebase understanding → highest tier
 
 ## The Task Loop
 
@@ -300,12 +309,12 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 **NEEDS_CONTEXT:** The implementer needs information that wasn't provided. Provide the missing context and re-dispatch.
 
 **BLOCKED:** The implementer cannot complete the task. Assess the blocker:
-1. If it's a context problem, provide more context and re-dispatch with the same model
-2. If the task requires more reasoning, re-dispatch with a more capable model
+1. If it's a context problem, provide more context and re-dispatch at the same effort tier
+2. If the task requires more reasoning, re-dispatch at a higher effort tier
 3. If the task is too large, break it into smaller pieces
 4. If the plan itself is wrong, rule on the correction, ledger it, and re-dispatch with the ruling carried in the dispatch
 
-**Never** ignore an escalation or force the same model to retry without changes. If the implementer said it's stuck, something needs to change.
+**Never** ignore an escalation or force the same effort tier to retry without changes. If the implementer said it's stuck, something needs to change.
 
 If the implementer asks questions — before starting or mid-task — answer
 clearly and completely, provide additional context if needed, and don't
@@ -384,7 +393,7 @@ choices. If your harness cannot send another message to a live subagent,
 dispatch a fresh implementer carrying the brief path, the report-file path,
 and the findings — the report file is the persistent memory either way.
 
-**Rounds 4-5 — dispatch a fresh implementer on a more capable model** (per
+**Rounds 4-5 — dispatch a fresh implementer at a higher effort tier** (per
 Model Selection), with the brief path, the report-file path, the open
 findings, and this framing: "A prior implementer attempted this task
 [N] times; you own it now. Read the report file for what was tried." A loop
@@ -455,7 +464,7 @@ The final whole-branch review gets a package too: run
 branch started from, e.g. `git merge-base main HEAD`) and include the
 printed path in the final review dispatch, so the final reviewer reads
 one file instead of re-deriving the branch diff with git commands. Dispatch
-on the most capable available model (see Model Selection), using
+at the highest effort tier (see Model policy + Model Selection), using
 superpowers:requesting-code-review's
 [code-reviewer.md](../requesting-code-review/code-reviewer.md). Point it at
 the ledger's deferred-minor and parked lines so it can triage which must be
@@ -565,7 +574,7 @@ Re-reviewer: Missing progress reporting — ADDRESSED (src/recovery.js:41).
 ...
 
 [After all tasks]
-[Run review-package PLAN_FILE MERGE_BASE HEAD; dispatch final code-reviewer, most capable model]
+[Run review-package PLAN_FILE MERGE_BASE HEAD; dispatch final code-reviewer at the highest effort tier]
 Final reviewer: All requirements met. Deferred minors triaged: none block merge.
 
 [Delete this plan's workspace — the record now lives in git]

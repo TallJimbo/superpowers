@@ -36,6 +36,28 @@ When a skill mentions "your instructions file", on OpenCode this is the project'
 `AGENTS.md` (loaded hierarchically). Project-specific concerns such as branch or
 worktree isolation are specified in `AGENTS.md`.
 
+## Model policy
+
+All subagents run on the machine-designated local model — **never** an
+OpenCode Zen or Princeton AI Sandbox model, at the primary agent, for any
+subagent, in any situation.
+
+- Designated model: `rubin-dm-01/local-inference-lab/Qwen3.8-Flash-Next-NVFP4`
+  (Broadmead DGX Spark). The OpenCode catalog is allowlisted to this
+  provider: naming any other provider's model in a `task` dispatch is a hard
+  error by design.
+- Default dispatch: **omit** the `model` parameter. The `agent` config and
+  agent frontmatter pin the designated model for `general`, `explore`, and
+  `sp-review` at the `medium` effort variant, and an omitted parameter runs
+  the subagent on that pin.
+- Vary reasoning effort by passing the designated id with a variant suffix:
+  `rubin-dm-01/local-inference-lab/Qwen3.8-Flash-Next-NVFP4#low`,
+  `#medium`, or `#xhigh` — the full designated id plus the suffix, never the
+  suffix alone. This is the only permitted reason to set the parameter.
+- Never use the `models` tool to shop for models. If a dispatch errors that a
+  model is unavailable, you named an undesignated model: re-read this policy
+  and re-dispatch — do not retry with another id.
+
 ## Notes
 
 - OpenCode has no separate `apply_patch` tool; use `write` and `edit`.
