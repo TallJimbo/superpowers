@@ -92,31 +92,26 @@ bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
 
 **Other environments:** The server must keep running in the background across conversation turns. If your environment reaps detached processes, use `--foreground` and launch the command with your platform's background execution mechanism.
 
-**tkt workspaces (Zed agent with sandboxed MCP tools):** Do **not** launch the
-server from the sandboxed `bash` tool — the sandbox is network-isolated, so the
-returned URL would be unreachable from the user's browser, and detached
-processes there are fragile. Use the `brainstorm_server` MCP tool instead:
+**tkt workspaces (harnesses with the session MCP tools):** Do **not** launch
+the server from a sandboxed `bash` tool — a network-restricted sandbox
+cannot serve its loopback to the user's browser, and detached processes
+there are fragile. Use the `brainstorm_server` MCP tool instead:
 `action="start"` with `project_dir` set to a writable directory inside the
-workspace runs the server on the host, where the browser reaches it verbatim
-and auto-open works (the tool returns the same JSON: `url`, `screen_dir`,
-`state_dir`). The push loop below is unchanged — it is entirely file-based. Use
-`action="status"` instead of inspecting the `server-info`/`server-stopped`
-files by hand, and `action="stop"` to shut the server down. It self-exits when
-the session ends or after its idle timeout.
+workspace runs the server on the host, where the browser reaches it
+verbatim and auto-open works (the tool returns the same JSON: `url`,
+`screen_dir`, `state_dir`). The push loop below is unchanged — it is
+entirely file-based. Use `action="status"` instead of inspecting the
+`server-info`/`server-stopped` files by hand, and `action="stop"` to shut
+the server down. The host owns the server's lifetime: it self-exits after
+its idle timeout (4 hours by default), independent of your tool process.
 
-**Legacy tkt sandbox runs (e.g. OpenCode, no MCP tool):** The sandbox bridges a
-fixed port from inside the network-isolated sandbox back to the host (default
-`8081`, configured as the sandbox tool's `vc_port`). Bind the server in-sandbox
-to that port (`BRAINSTORM_PORT=<vc_port>`) and pass `--project-dir` a writable
-root (the `.agent` directory in a ticket workspace, or the repository root in
-single-repo mode); screens are served to the host over the bridge, so the
-returned URL works verbatim in the host browser. Do **not** use `--open` (there
-is no display in the sandbox) — give the user the URL instead. The default
-backgrounding survives across bash calls because the server's watchdog exits
-when its launching harness (the script's grandparent, overridable via
-`--owner-pid`) dies; if your sandbox reaps
-detached processes, add `--foreground` and background it with your harness's
-mechanism.
+**tkt sandboxes missing the session tools (e.g. `--network` runs, old tkt
+checkouts):** there is no port bridge to the host any more — an in-sandbox
+server is unreachable from the human's browser by design. Do not start one
+and do not hunt for a port to bind: stop and report that `brainstorm_server`
+(or `plannotator`) is missing from your toolset, and suggest rerunning with
+the default restricted sandbox, where the host-side session tools serve the
+human's browser directly.
 
 If the URL is unreachable from your browser (common in remote/containerized setups), bind a non-loopback host:
 
@@ -132,7 +127,7 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
 ## The Loop
 
 1. **Check server is alive**, then **write HTML** to a new file in `screen_dir`:
-   - **Required: confirm the server is alive before referring to the URL or pushing a screen.** Check that `$STATE_DIR/server-info` exists and `$STATE_DIR/server-stopped` does not. If it has shut down, restart it with `start-server.sh` using the **same `--project-dir`** — it reuses the same port, so the user's open tab reconnects on its own (it shows a "paused" overlay while the server is down) and you don't need to send a new URL. The server auto-exits after 4 hours idle (configurable with `--idle-timeout-minutes`).
+   - **Required: confirm the server is alive before referring to the URL or pushing a screen.** Check that `$STATE_DIR/server-info` exists and `$STATE_DIR/server-stopped` does not. If it has shut down, restart it with `start-server.sh` — or, where the `brainstorm_server` MCP tool is available, `action="start"` — using the **same `--project-dir`**: it reuses the same port, so the user's open tab reconnects on its own (it shows a "paused" overlay while the server is down) and you don't need to send a new URL. The server auto-exits after 4 hours idle (configurable with `--idle-timeout-minutes`).
    - Use semantic filenames: `platform.html`, `visual-style.html`, `layout.html`
    - **Never reuse filenames** — each screen gets a fresh file
    - Use your file-creation tool — **never use cat/heredoc** (dumps noise into terminal)

@@ -82,6 +82,7 @@ digraph process {
     "Dispatch final code reviewer (../requesting-code-review/code-reviewer.md)" [shape=box];
     "Final findings? ONE fix dispatch, one scoped re-review, adjudicate residuals" [shape=box];
     "Final review clean: delete this plan's workspace" [shape=box];
+        "Offer human Plannotator review (optional)" [shape=box];
     "Use superpowers:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
     "Setup: worktree, ledger check, read plan, pre-flight review" -> "Dispatch implementer subagent (./implementer-prompt.md)";
@@ -111,7 +112,8 @@ digraph process {
     "More tasks remain?" -> "Dispatch final code reviewer (../requesting-code-review/code-reviewer.md)" [label="no"];
     "Dispatch final code reviewer (../requesting-code-review/code-reviewer.md)" -> "Final findings? ONE fix dispatch, one scoped re-review, adjudicate residuals";
     "Final findings? ONE fix dispatch, one scoped re-review, adjudicate residuals" -> "Final review clean: delete this plan's workspace";
-    "Final review clean: delete this plan's workspace" -> "Use superpowers:finishing-a-development-branch";
+    "Final review clean: delete this plan's workspace" -> "Offer human Plannotator review (optional)";
+    "Offer human Plannotator review (optional)" -> "Use superpowers:finishing-a-development-branch";
 }
 ```
 
@@ -482,6 +484,25 @@ rulings, or rule on the load-bearing ones and ledger what you decided. Only
 the four classes above stop you here. There is no second fix wave —
 residual load-bearing findings surface to your human partner when
 finishing-a-development-branch presents the options.
+
+### Human browser review (optional)
+
+Once the final whole-branch review is clean, offer your human partner a
+Plannotator review of the branch before finishing: the diff they are about
+to merge, annotated in their browser. Use the `plannotator` tool where your
+harness provides one, otherwise the plannotator CLI (see your sandbox
+environment notes for how the URL reaches the human). Where multiple
+repositories changed, review one repo at a time with the layered-branch
+convention — `--base <the branch or SHA your work sits on>` (for agent
+worktrees, the human branch below yours). One session at a time: end your
+turn after each launch and wait for the `Plannotator:` message; never poll it.
+
+Treat findings like any other review input: verify each against the code
+before fixing; fixes go through one fix dispatch plus one scoped re-review,
+as in the final-review fix wave; notes accompanying an approval are
+guidance, not change requests. If fixes land, offer a re-review of the fix
+range. This is an offer, not a gate — declined, unavailable, or no
+plannotator present: say so in the finishing handoff and proceed.
 
 ## Finish
 
