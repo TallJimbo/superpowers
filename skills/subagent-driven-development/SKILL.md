@@ -495,7 +495,9 @@ environment notes for how the URL reaches the human). Where multiple
 repositories changed, review one repo at a time with the layered-branch
 convention — `--base <the branch or SHA your work sits on>` (for agent
 worktrees, the human branch below yours). One session at a time: end your
-turn after each launch and wait for the `Plannotator:` message; never poll it.
+turn after each launch; when your human partner prods you with the outcome,
+pull it with the `plannotator` tool's `result` action — never busy-poll on a
+timer.
 
 Treat findings like any other review input: verify each against the code
 before fixing; fixes go through one fix dispatch plus one scoped re-review,
