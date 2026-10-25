@@ -63,6 +63,10 @@ Subagent (general-purpose):
     - Security concerns?
     - Integrates cleanly with surrounding code?
 
+    **Style:**
+    - Check any symbols with simple definitions against the "Coding style preferences" in your system prompt.
+    - Check all docstrings and comments against the "Prose style guidelines" in your system prompt.
+
     **Testing:**
     - Tests verify real behavior, not mocks?
     - Edge cases covered?
